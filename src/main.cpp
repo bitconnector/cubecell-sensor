@@ -171,9 +171,6 @@ void setup()
   delay(2000);
   Serial.println("test1");
 
-#if (AT_SUPPORT)
-  enableAt();
-#endif
   deviceState = DEVICE_STATE_INIT;
   LoRaWAN.ifskipjoin();
 
@@ -203,13 +200,8 @@ void loop()
   {
   case DEVICE_STATE_INIT:
   {
-#if (LORAWAN_DEVEUI_AUTO)
-    LoRaWAN.generateDeveuiByChipID();
-#endif
-#if (AT_SUPPORT)
-    getDevParam();
-#endif
-    printDevParam();
+    // LoRaWAN.generateDeveuiByChipID();
+    // printDevParam();
     LoRaWAN.init(loraWanClass, loraWanRegion);
     deviceState = DEVICE_STATE_JOIN;
     break;
@@ -221,32 +213,26 @@ void loop()
   }
   case DEVICE_STATE_SEND:
   {
-    prepareTxFrame();
+    prepareTxFrame(); // sending according to appTxDutyCycle
     LoRaWAN.send();
     deviceState = DEVICE_STATE_CYCLE;
     break;
   }
   case DEVICE_STATE_CYCLE:
   {
-    // Schedule next packet transmission
-    txDutyCycleTime = appTxDutyCycle + randr(0, APP_TX_DUTYCYCLE_RND);
+    txDutyCycleTime = appTxDutyCycle + randr(0, APP_TX_DUTYCYCLE_RND); // Schedule next packet transmission
     LoRaWAN.cycle(txDutyCycleTime);
     deviceState = DEVICE_STATE_SLEEP;
     break;
   }
   case DEVICE_STATE_SLEEP:
   {
-    if (accelWoke)
+    if (accelWoke && IsLoRaMacNetworkJoined) // button pressed
     {
-      if (IsLoRaMacNetworkJoined)
-      {
-        if (prepareTxFrame())
-        {
-          LoRaWAN.send();
-        }
-      }
-      accelWoke = false;
+      prepareTxFrame();
+      LoRaWAN.send();
     }
+    accelWoke = false;
     LoRaWAN.sleep();
     break;
   }
