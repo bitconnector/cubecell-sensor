@@ -2,6 +2,9 @@
 typedef unsigned char uint8_t;
 typedef unsigned long uint32_t;
 
+/*OTAA or ABP*/
+bool overTheAirActivation = true;
+
 /* OTAA para*/
 uint8_t devEui[] = {0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x05, 0x41, 0xAA};
 uint8_t appEui[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -11,3 +14,25 @@ uint8_t appKey[] = {0x27, 0xE6, 0xE8, 0x68, 0xFF, 0x54, 0x39, 0x9E, 0x7F, 0x8F, 
 uint8_t nwkSKey[] = {0x50, 0x74, 0x00, 0x4D, 0x44, 0x2D, 0xF5, 0xB9, 0xD0, 0xBD, 0x4E, 0xA3, 0x7A, 0xBB, 0xD9, 0xA5};
 uint8_t appSKey[] = {0x73, 0x5A, 0xA2, 0x0B, 0xD3, 0xE3, 0xA4, 0x1A, 0xE8, 0x4B, 0x48, 0xEB, 0xA1, 0xA4, 0x93, 0xD8};
 uint32_t devAddr = (uint32_t)0x260BDB1E;
+
+/*!
+ * Number of trials to transmit the frame, if the LoRaMAC layer did not
+ * receive an acknowledgment. The MAC performs a datarate adaptation,
+ * according to the LoRaWAN Specification V1.0.2, chapter 18.4, according
+ * to the following table:
+ *
+ * Transmission nb | Data Rate
+ * ----------------|-----------
+ * 1 (first)       | DR
+ * 2               | DR
+ * 3               | max(DR-1,0)
+ * 4               | max(DR-1,0)
+ * 5               | max(DR-2,0)
+ * 6               | max(DR-2,0)
+ * 7               | max(DR-3,0)
+ * 8               | max(DR-3,0)
+ *
+ * Note, that if NbTrials is set to 1 or 2, the MAC will not decrease
+ * the datarate, in case the LoRaMAC layer did not receive an acknowledgment
+ */
+uint8_t confirmedNbTrials = 4;
