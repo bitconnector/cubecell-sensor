@@ -36,3 +36,6 @@ uint32_t devAddr = (uint32_t)0x260BDB1E;
  * the datarate, in case the LoRaMAC layer did not receive an acknowledgment
  */
 uint8_t confirmedNbTrials = 4;
+
+#define USE_BME
+//#define USE_DHT

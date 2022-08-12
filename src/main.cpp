@@ -2,9 +2,6 @@
 #include "Arduino.h"
 #include "config.hpp"
 
-#define USE_BME
-//#define USE_DHT
-
 #include "dht.hpp"
 #include "bme.hpp"
 
