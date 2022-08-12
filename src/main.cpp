@@ -2,7 +2,11 @@
 #include "Arduino.h"
 #include "config.hpp"
 
+#define USE_BME
+//#define USE_DHT
+
 #include "dht.hpp"
+#include "bme.hpp"
 
 // The interrupt pin is attached to USER_KEY
 #define INT_PIN USER_KEY
@@ -61,16 +65,23 @@ void packPin(uint8_t *appData, uint8_t *appDataSize)
 void pepareStatusFrame()
 {
   appPort = 1;
+  appDataSize = 0;
   packBat(appData, &appDataSize);
   packPin(appData, &appDataSize);
 }
 
 void pepareDataFrame()
 {
+  appDataSize = 0;
 #ifdef USE_DHT
   appPort = 2;
   packBat(appData, &appDataSize);
   packDhtData(appData, &appDataSize);
+#endif
+#ifdef USE_BME
+  appPort = 3;
+  packBat(appData, &appDataSize);
+  bme::packBmeData(appData, &appDataSize);
 #endif
 }
 

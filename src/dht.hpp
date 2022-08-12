@@ -1,7 +1,5 @@
 #include "DHT.h"
 
-#define USE_DHT
-
 #define DHTPIN GPIO5
 #define DHTTYPE DHT22
 

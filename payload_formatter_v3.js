@@ -1,17 +1,50 @@
+function getBat(input, offset) {
+    var batVoltage = input.bytes[offset]
+    batVoltage += 250
+    batVoltage /= 100
+    return { batVoltage };
+}
+
+function getPin(input, offset) {
+    var button = input.bytes[offset]
+    return { button }
+}
+
+function getTempHum(input, offset) {
+    var humidity = input.bytes[offset + 2] | ((input.bytes[offset + 1] & 0x0f) << 8);
+    humidity /= 10
+    var temperature = ((input.bytes[offset + 1] & 0xf0) >> 4) | (input.bytes[offset] << 4)
+    temperature -= 400;
+    temperature /= 10;
+    return { humidity, temperature }
+}
+
+function getPress(input, offset) {
+    var pressure = (input.bytes[offset] << 8) | (input.bytes[offset + 1])
+    pressure += 15000;
+    pressure /= 50;
+    return { pressure }
+}
+
+
 function decodeUplink(input) {
     var data = {};
 
-    if (input.bytes[0] != 0xff) {
-        data.humidity = input.bytes[2] | ((input.bytes[1] & 0x0f) << 8);
-        data.humidity /= 10
-        data.temperature = ((input.bytes[1] & 0xf0) >> 4) | (input.bytes[0] << 4)
-        data.temperature -= 400;
-        data.temperature /= 10;
+    data = getBat(input, 0)
+
+    if (input.fPort == 1) {
+        data = Object.assign(data, getPin(input, 1))
     }
 
-    data.batVoltage = input.bytes[3]
-    data.batVoltage += 250
-    data.batVoltage /= 100
+    else if (input.fPort == 2) {
+        data = Object.assign(data, getTempHum(input, 1))
+    }
+
+    else if (input.fPort == 3) {
+        data = Object.assign(data, getTempHum(input, 1))
+        data = Object.assign(data, getPress(input, 4))
+    }
+
 
     return { data };
 }

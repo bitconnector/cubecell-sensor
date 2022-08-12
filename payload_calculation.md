@@ -28,6 +28,7 @@ step: 1.8V / 0.01V = 180 -> 8bit
 
 limit: 2.5V + (0.01V * 256) = 5,06V
 
+
 # DHT22
 
 ## Humidity
@@ -38,7 +39,6 @@ step: 100% / 0.1% = 1000 -> 10bit
 
 limit: 0% + (0.1% * 1024) = 102.4%
 
-
 ## Temperature
 
 range: 80C - -40C = 120C
@@ -46,4 +46,31 @@ range: 80C - -40C = 120C
 step: 120C / 0.1C = 1200 -> 11bit
 
 limit: -40C + (0.1C * 2048) = 164.8C
+
+
+# BME
+
+## Humidity
+
+range: 100% - 0% = 100%
+
+step: 100% / 0.1% = 1000 -> 10bit
+
+limit: 0% + (0.1% * 1024) = 102.4%
+
+## Temperature
+
+range: 85C - -40C = 125C
+
+step: 125C / 0.1C = 1200 -> 11bit
+
+limit: -40C + (0.1C * 2048) = 164.8C
+
+## Pressure
+
+range: 1100hPa - 300hPa = 800hPa
+
+step: 800hPa / 0.02hPa = 40000 -> 16bit
+
+limit: 300hPa + (0.02hPa * 65536) = 1610,72hPa
 
