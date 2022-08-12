@@ -39,17 +39,39 @@ void readBat()
   // Serial.printf("Bat:%u, %u%\n", batteryVoltage, batteryLevel);
 }
 
-uint8_t packBat(uint8_t *appData)
+void packBat(uint8_t *appData, uint8_t *appDataSize)
 {
   readBat();
-  appData[0] = (batteryVoltage / 10) - 250;
-  return 1;
+  appData[*appDataSize] = (batteryVoltage / 10) - 250;
+  *appDataSize += 1;
 }
 
 bool accelWoke = false;
 void accelWakeup()
 {
   accelWoke = true;
+}
+
+void packPin(uint8_t *appData, uint8_t *appDataSize)
+{
+  appData[*appDataSize] = accelWoke;
+  *appDataSize += 1;
+}
+
+void pepareStatusFrame()
+{
+  appPort = 1;
+  packBat(appData, &appDataSize);
+  packPin(appData, &appDataSize);
+}
+
+void pepareDataFrame()
+{
+#ifdef USE_DHT
+  appPort = 2;
+  packBat(appData, &appDataSize);
+  packDhtData(appData, &appDataSize);
+#endif
 }
 
 void setup()
@@ -101,7 +123,7 @@ void loop()
   }
   case DEVICE_STATE_SEND:
   {
-    appDataSize = packDhtData(appData); // sending according to appTxDutyCycle
+    pepareDataFrame(); // sending according to appTxDutyCycle
     LoRaWAN.send();
     deviceState = DEVICE_STATE_CYCLE;
     break;
@@ -117,7 +139,7 @@ void loop()
   {
     if (accelWoke && IsLoRaMacNetworkJoined) // button pressed
     {
-      // prepareTxFrame();
+      pepareStatusFrame();
       LoRaWAN.send();
     }
     accelWoke = false;

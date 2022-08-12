@@ -34,32 +34,16 @@ void readDht()
 }
 
 /* Prepares the payload of the frame */
-uint8_t packDhtData(uint8_t *appData)
+void packDhtData(uint8_t *appData, uint8_t *appDataSize)
 {
-    readTemp();
+    readDht();
 
     uint32_t dhtData = ((uint16_t)((temperature + 40) * 10)) << 12 | ((uint16_t)(humidity * 10));
-    Serial.printf("dhtHum:%06x\n", ((uint16_t)((temperature + 40) * 10)));
-    Serial.printf("dhtData:%06x\n", dhtData);
+    // Serial.printf("dhtHum:%06x\n", ((uint16_t)((temperature + 40) * 10)));
+    // Serial.printf("dhtData:%06x\n", dhtData);
 
-    // readBat();
-
-    //*appPort = 1;
-    // isTxConfirmed = LORAWAN_UPLINKMODE;
-
-    // appDataSize = 4;
-
-    appData[0] = dhtData >> 16;
-    appData[1] = dhtData >> 8;
-    appData[2] = dhtData;
-
-    // appData[3] = batData;
-
-    Serial.print("appData:");
-    for (int i = 0; i < 4; i++)
-    {
-        Serial.printf(" %02x", appData[i]);
-    }
-    Serial.println();
-    return 3;
+    appData[*appDataSize] = dhtData >> 16;
+    appData[*appDataSize + 1] = dhtData >> 8;
+    appData[*appDataSize + 2] = dhtData;
+    *appDataSize += 3;
 }
