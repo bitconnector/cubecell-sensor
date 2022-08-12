@@ -76,7 +76,7 @@ void pepareDataFrame()
 #ifdef USE_DHT
   appPort = 2;
   packBat(appData, &appDataSize);
-  packDhtData(appData, &appDataSize);
+  dht::packDhtData(appData, &appDataSize);
 #endif
 #ifdef USE_BME
   appPort = 3;
